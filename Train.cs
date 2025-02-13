@@ -116,9 +116,22 @@ public class Train(Level level,
         Console.SetCursorPosition(0, 0);
         Console.WriteLine(new string(' ', Console.WindowWidth));
         Console.SetCursorPosition(0, 0);
-        Console.Write($"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%)");
+        Console.Write(Global.GameTime.IsRunning
+            ? $"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%)"
+            : "Press enter to start!");
         Level.ResetCursor();
         Global.ConsoleLock.ExitReadLock();
+        
+        //check if in station
+        var partOnDetector = TrainParts.FirstOrDefault(part => Level.Fields[part.X, part.Y].Any(thing => thing is StationDetector));
+        if (Math.Abs(CurrentSpeed) < 0.001 && partOnDetector != null)
+        {
+            var detectedPartIndex = TrainParts.IndexOf(partOnDetector);
+            var middlePartIndex = (TrainParts.Count - 1) / 2;
+            var distance = (detectedPartIndex - middlePartIndex) + PositionInField;
+            Console.WriteLine($"Done! Distance={Math.Round(Math.Abs(distance * RealWidth), 2, MidpointRounding.AwayFromZero)}m, Time={Math.Round(Global.GameTime.Elapsed.TotalSeconds, 1, MidpointRounding.AwayFromZero)}s");
+            Environment.Exit(0);
+        }
         
         Timer?.Change(TimeSpan.FromSeconds(TickDuration), Timeout.InfiniteTimeSpan);
     }

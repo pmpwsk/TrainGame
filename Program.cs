@@ -1,4 +1,5 @@
-﻿using uwap.GameLibrary;
+﻿using System.Diagnostics;
+using uwap.GameLibrary;
 
 const int width = 700;
 const int height = 380;
@@ -15,14 +16,19 @@ for (int y = 0; y < level1.Height; y++)
         level1.Fields[x, y] = [new Background()];
 
 //Create rails
-for (int x = 1; x <= 20; x++)
+for (int x = 1; x <= 100; x++)
     level1.Fields[x, 1].Add(new Rail());
-for (int y = 2; y <= 19; y++)
+for (int y = 2; y <= 99; y++)
     level1.Fields[1, y].Add(new Rail());
-for (int x = 1; x <= 20; x++)
-    level1.Fields[x, 20].Add(new Rail());
-for (int y = 2; y <= 19; y++)
-    level1.Fields[20, y].Add(new Rail());
+for (int x = 1; x <= 100; x++)
+    level1.Fields[x, 100].Add(new Rail());
+for (int y = 2; y <= 99; y++)
+    level1.Fields[100, y].Add(new Rail());
+
+//Create train station
+level1.Fields[50, 100].Add(new StationDetector());
+for (int x = 43; x <= 57; x++)
+    level1.Fields[x, 101].Add(new Platform());
 
 //Create train
 List<TrainPart> train1Parts = [];
@@ -53,34 +59,44 @@ bool KeyFunction(ConsoleKey key)
         case ConsoleKey.Escape:
             return true;
         case ConsoleKey.D1:
-            train1.DesiredAcceleration = -1;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = -1;
             break;
         case ConsoleKey.D2:
-            train1.DesiredAcceleration = -0.75;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = -0.75;
             break;
         case ConsoleKey.D3:
-            train1.DesiredAcceleration = -0.5;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = -0.5;
             break;
         case ConsoleKey.D4:
-            train1.DesiredAcceleration = -0.25;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = -0.25;
             break;
         case ConsoleKey.D5:
-            train1.DesiredAcceleration = 0;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = 0;
             break;
         case ConsoleKey.D6:
-            train1.DesiredAcceleration = 0.25;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = 0.25;
             break;
         case ConsoleKey.D7:
-            train1.DesiredAcceleration = 0.5;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = 0.5;
             break;
         case ConsoleKey.D8:
-            train1.DesiredAcceleration = 0.75;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = 0.75;
             break;
         case ConsoleKey.D9:
-            train1.DesiredAcceleration = 1;
+            if (Global.GameTime.IsRunning)
+                train1.DesiredAcceleration = 1;
             break;
         case ConsoleKey.R:
-            train1.ChangeDirection();
+            if (Global.GameTime.IsRunning)
+                train1.ChangeDirection();
             break;
         case ConsoleKey.LeftArrow:
             level1.ScrollBy(-10, 0);
@@ -93,6 +109,10 @@ bool KeyFunction(ConsoleKey key)
             break;
         case ConsoleKey.DownArrow:
             level1.ScrollBy(0, 10);
+            break;
+        case ConsoleKey.Enter:
+            if (!Global.GameTime.IsRunning)
+                Global.GameTime.Start();
             break;
     }
 
