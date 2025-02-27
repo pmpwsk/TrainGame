@@ -3,8 +3,8 @@ using uwap.GameLibrary;
 
 const int width = 700;
 const int height = 380;
-const int viewWidth = 70;
-const int viewHeight = 38;
+int viewWidth = Console.WindowWidth / 2;
+int viewHeight = (Console.WindowHeight - 2);
 
 //Create level object
 Level level1 = new(width, height, viewWidth, viewHeight, new List<Thing>[width, height]);
