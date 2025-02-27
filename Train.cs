@@ -66,6 +66,10 @@ public class Train(Level level,
     
     private Timer? Timer;
     
+    private int NextIndex = 0;
+
+    private double TotalOffset = 0;
+    
     public void StartTimer()
         => Timer = new Timer(MovementTick, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
     
@@ -117,7 +121,7 @@ public class Train(Level level,
         Console.WriteLine(new string(' ', Console.WindowWidth));
         Console.SetCursorPosition(0, 0);
         Console.Write(Global.GameTime.IsRunning
-            ? $"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%)"
+            ? $"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%) - Next station: {NextIndex}"
             : "Press enter to start!");
         Level.ResetCursor();
         Global.ConsoleLock.ExitReadLock();
@@ -126,11 +130,20 @@ public class Train(Level level,
         var partOnDetector = TrainParts.FirstOrDefault(part => Level.Fields[part.X, part.Y].Any(thing => thing is StationDetector));
         if (Math.Abs(CurrentSpeed) < 0.001 && partOnDetector != null)
         {
-            var detectedPartIndex = TrainParts.IndexOf(partOnDetector);
-            var middlePartIndex = (TrainParts.Count - 1) / 2;
-            var distance = (detectedPartIndex - middlePartIndex) + PositionInField;
-            Console.WriteLine($"Done! Distance={Math.Round(Math.Abs(distance * RealWidth), 2, MidpointRounding.AwayFromZero)}m, Time={Math.Round(Global.GameTime.Elapsed.TotalSeconds, 1, MidpointRounding.AwayFromZero)}s");
-            Environment.Exit(0);
+            var detector = Level.Fields[partOnDetector.X, partOnDetector.Y].OfType<StationDetector>().First();
+            if (NextIndex == detector.Index)
+            {
+                var detectedPartIndex = TrainParts.IndexOf(partOnDetector);
+                var middlePartIndex = (TrainParts.Count - 1) / 2;
+                var distance = (detectedPartIndex - middlePartIndex) + PositionInField;
+                TotalOffset += Math.Abs(distance);
+                if (detector.IsLast)
+                {
+                    Console.WriteLine($"Done! Average distance was {Math.Round(TotalOffset / (NextIndex+1), 2, MidpointRounding.AwayFromZero)}m, time taken is {Math.Round(Global.GameTime.Elapsed.TotalSeconds, 1, MidpointRounding.AwayFromZero)}s");
+                    Environment.Exit(0);
+                }
+                else NextIndex++;
+            }
         }
         
         Timer?.Change(TimeSpan.FromSeconds(TickDuration), Timeout.InfiniteTimeSpan);
