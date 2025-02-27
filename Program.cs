@@ -25,10 +25,10 @@ for (int y = 2; y <= 99; y++)
     level1.Fields[100, y].Add(new Rail());
 
 //Create train station
-level1.Stations.Add(new(100, 50, 1, 0));
-level1.Stations.Add(new(50, 100, 0, -1));
-level1.Stations.Add(new(1, 50, -1, 0));
-level1.Stations.Add(new(8, 1, 0, 1));
+level1.Stations.Add(new(100, 50, 1, 0, "Cologne"));
+level1.Stations.Add(new(50, 100, 0, -1, "Munich"));
+level1.Stations.Add(new(1, 50, -1, 0, "Berlin"));
+level1.Stations.Add(new(8, 1, 0, 1, "Dresden"));
 
 for (int i = 0; i < level1.Stations.Count; i++)
 {

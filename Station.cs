@@ -1,4 +1,4 @@
-public class Station(int detectorX, int detectorY, int platformOffsetX, int platformOffsetY)
+public class Station(int detectorX, int detectorY, int platformOffsetX, int platformOffsetY, string name)
 {
     public int DetectorX = detectorX;
 
@@ -7,4 +7,6 @@ public class Station(int detectorX, int detectorY, int platformOffsetX, int plat
     public int PlatformOffsetX = platformOffsetX;
 
     public int PlatformOffsetY = platformOffsetY;
+
+    public string Name = name;
 }

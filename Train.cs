@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using uwap.GameLibrary;
 
-public class Train(Level level,
+public class Train(TrainLevel level,
     double maxSpeed, double timeToTopSpeed, double timeToStop,
     double accelerationExponent, double decelerationExponent,
     double minAcceleration, double minDeceleration,
@@ -17,7 +17,7 @@ public class Train(Level level,
     /// </summary>
     private const double TickDuration = 0.05;
 
-    private Level Level = level;
+    private TrainLevel Level = level;
     
     private List<TrainPart> TrainParts = trainParts;
 
@@ -121,7 +121,7 @@ public class Train(Level level,
         Console.WriteLine(new string(' ', Console.WindowWidth));
         Console.SetCursorPosition(0, 0);
         Console.Write(Global.GameTime.IsRunning
-            ? $"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%) - Next station: {NextIndex}"
+            ? $"{(Direction > 0.9 ? "D" : Direction < -0.9 ? "R" : "N")} {Math.Round(CurrentSpeed, 0, MidpointRounding.AwayFromZero)} km/h ({DesiredAcceleration * 100}%) - Next station: {Level.Stations[NextIndex].Name}"
             : "Press enter to start!");
         Level.ResetCursor();
         Global.ConsoleLock.ExitReadLock();
