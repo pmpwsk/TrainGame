@@ -1,9 +1,9 @@
 ﻿using uwap.GameLibrary;
 
-const int width = 700;
-const int height = 380;
-int viewWidth = Console.WindowWidth / 2;
-int viewHeight = (Console.WindowHeight - 2);
+const int width = 61;
+const int height = 61;
+int viewWidth = Math.Min(width, Console.WindowWidth / 2);
+int viewHeight = Math.Min(height, Console.WindowHeight - 2);
 
 //Create level object
 TrainLevel level1 = new(width, height, viewWidth, viewHeight, new List<Thing>[width, height]);
@@ -15,20 +15,26 @@ for (int y = 0; y < level1.Height; y++)
         level1.Fields[x, y] = [new Background()];
 
 //Create rails
-for (int x = 1; x <= 100; x++)
-    level1.Fields[x, 1].Add(new Rail());
-for (int y = 2; y <= 99; y++)
-    level1.Fields[1, y].Add(new Rail());
-for (int x = 1; x <= 100; x++)
-    level1.Fields[x, 100].Add(new Rail());
-for (int y = 2; y <= 99; y++)
-    level1.Fields[100, y].Add(new Rail());
+for (int x = 0; x <= 30; x++)
+    level1.Fields[x, 0].Add(new Rail());
+for (int y = 1; y <= 60; y++)
+    level1.Fields[30, y].Add(new Rail());
+for (int x = 31; x <= 60; x++)
+    level1.Fields[x, 60].Add(new Rail());
+for (int y = 30; y <= 59; y++)
+    level1.Fields[60, y].Add(new Rail());
+for (int x = 0; x <= 29; x++)
+    level1.Fields[x, 30].Add(new Rail());
+for (int x = 31; x <= 59; x++)
+    level1.Fields[x, 30].Add(new Rail());
+for (int y = 1; y <= 29; y++)
+    level1.Fields[0, y].Add(new Rail());
 
 //Create train station
-level1.Stations.Add(new(100, 50, 1, 0, "Cologne"));
-level1.Stations.Add(new(50, 100, 0, -1, "Munich"));
-level1.Stations.Add(new(1, 50, -1, 0, "Berlin"));
-level1.Stations.Add(new(8, 1, 0, 1, "Dresden"));
+level1.Stations.Add(new(45, 60, 0, -1, "Berlin"));
+level1.Stations.Add(new(45, 30, 0, 1, "Munich"));
+level1.Stations.Add(new(15, 30, 0, -1, "Dresden"));
+level1.Stations.Add(new(15, 0, 0, 1, "Cologne"));
 
 for (int i = 0; i < level1.Stations.Count; i++)
 {
@@ -48,8 +54,8 @@ for (int i = 0; i < level1.Stations.Count; i++)
 
 //Create train
 List<TrainPart> train1Parts = [];
-for (int x = 13; x >= 3; x--)
-    train1Parts.Add(new(level1, x, 1));
+for (int x = 19; x >= 11; x--)
+    train1Parts.Add(new(level1, x, 0));
 foreach (var trainPart in train1Parts)
     level1.Fields[trainPart.X, trainPart.Y].Add(trainPart);
 Train train1 = new(level1,

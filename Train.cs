@@ -103,15 +103,13 @@ public class Train(TrainLevel level,
         {
             //move forwards
             for (int i = 0; i < posInt; i++)
-                if (!MoveTrain(TrainParts.First(), TrainParts.Last()))
-                    Environment.Exit(0);
+                MoveTrain(TrainParts.First(), TrainParts.Last());
         }
         else if (posInt < 0)
         {
             //move backwards
             for (int i = 0; i < -posInt; i++)
-                if (!MoveTrain(TrainParts.Last(), TrainParts.First()))
-                    Environment.Exit(0);
+                MoveTrain(TrainParts.Last(), TrainParts.First());
         }
         
         PositionInField -= posInt;
@@ -149,32 +147,40 @@ public class Train(TrainLevel level,
         Timer?.Change(TimeSpan.FromSeconds(TickDuration), Timeout.InfiniteTimeSpan);
     }
 
-    private bool MoveTrain(TrainPart start, TrainPart end)
-        => MoveTrainPart(start, end, 1, 0)
-        || MoveTrainPart(start, end, 0, 1)
-        || MoveTrainPart(start, end, -1, 0)
-        || MoveTrainPart(start, end, 0, -1);
-
-    private bool MoveTrainPart(TrainPart start, TrainPart end, int xOffset, int yOffset)
+    private void MoveTrain(TrainPart start, TrainPart end)
     {
-        if (IsEmptyRail(start.X + xOffset, start.Y + yOffset))
-        {
-            end.MoveTo(start.X + xOffset, start.Y + yOffset);
-            TrainParts.Remove(end);
-            if (TrainParts.First() == start)
-                TrainParts.Insert(0, end);
-            else TrainParts.Add(end);
-            return true;
-        }
-
-        return false;
+        List<Position> positions =
+        [
+            new(start.X + 1, start.Y + 0),
+            new(start.X + 0, start.Y + 1),
+            new(start.X + -1, start.Y + 0),
+            new(start.X + 0, start.Y + -1),
+        ];
+        var indexWithTrain = positions.FindIndex(p => IsValidRail(p) && Level.Fields[p.X, p.Y].Any(t => t is TrainPart));
+        var opposite = positions[(indexWithTrain + 2) % 4];
+        MoveTo(start, end, IsEmptyRail(opposite) ? opposite : positions.First(IsEmptyRail));
     }
 
-    private bool IsEmptyRail(int x, int y)
+    private void MoveTo(TrainPart start, TrainPart end, Position position)
     {
-        var things = Level.Fields[x, y];
+        end.MoveTo(position.X, position.Y);
+        TrainParts.Remove(end);
+        if (TrainParts.First() == start)
+            TrainParts.Insert(0, end);
+        else TrainParts.Add(end);
+    }
+
+    private bool IsEmptyRail(Position position)
+    {
+        if (!IsValidRail(position))
+            return false;
+        
+        var things = Level.Fields[position.X, position.Y];
         return things.Any(t => t is Rail) && !things.Any(t => t is TrainPart);
     }
+
+    private bool IsValidRail(Position position)
+        => position.X >= 0 && position.X < Level.Width && position.Y >= 0 && position.Y < Level.Height;
 
     private double CalculateNewSpeed(double exponent, double minAcceleration, double fullTime)
         => CurrentSpeed + DesiredAcceleration * MaxSpeed * (TickDuration / fullTime)
