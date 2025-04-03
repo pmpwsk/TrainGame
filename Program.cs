@@ -31,10 +31,10 @@ for (int y = 1; y <= 29; y++)
     level1.Fields[0, y].Add(new Rail());
 
 //Create train station
-level1.Stations.Add(new(45, 60, 0, -1, "Berlin"));
-level1.Stations.Add(new(45, 30, 0, 1, "Munich"));
-level1.Stations.Add(new(15, 30, 0, -1, "Dresden"));
-level1.Stations.Add(new(15, 0, 0, 1, "Cologne"));
+level1.Stations.Add(new(45, 60, 0, -1, "Berlin", 43, 58));
+level1.Stations.Add(new(45, 30, 0, 1, "Munich", 43, 32));
+level1.Stations.Add(new(15, 30, 0, -1, "Dresden", 13, 28));
+level1.Stations.Add(new(15, 0, 0, 1, "Cologne", 13, 2));
 
 for (int i = 0; i < level1.Stations.Count; i++)
 {
@@ -49,6 +49,31 @@ for (int i = 0; i < level1.Stations.Count; i++)
     {
         for (int offsetY = -6; offsetY <= 6; offsetY++)
             level1.Fields[station.DetectorX + station.PlatformOffsetX, station.DetectorY + offsetY].Add(new Platform());
+    }
+
+    string name = station.Name;
+    if (name.Length % 2 != 0)
+        name = name + " ";
+    
+    List<string> nameParts = [""];
+    foreach (char letter in name)
+    {
+        string lastPart = nameParts.Last();
+        if (lastPart.Length < 2)
+        {
+            nameParts[nameParts.Count - 1] = lastPart + letter;
+        }
+        else
+        {
+            nameParts.Add(letter.ToString());
+        }
+    }
+
+    int x = station.NameX;
+    foreach (string namePart in nameParts)
+    {
+        level1.Fields[x, station.NameY].Add(new Label(namePart));
+        x++;
     }
 }
 
